@@ -34,6 +34,36 @@
       100% { background-position: 0% 50%; }
     }
 
+    /* Fullscreen Toggle Button Style */
+    .fullscreen-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 10;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #38bdf8;
+      padding: 10px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .fullscreen-btn:hover {
+      background: rgba(56, 189, 248, 0.2);
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+    }
+
     /* Animated Glowing Tech Data Rays Container */
     .neon-lines-bg {
       position: absolute;
@@ -135,7 +165,7 @@
       text-shadow: 0 2px 10px rgba(0,0,0,0.5);
     }
 
-    /* Dynamic Timer Display (Scale by Viewport) */
+    /* Dynamic Timer Display */
     .timer-display {
       font-size: clamp(3.2rem, 14vw, 6.5rem);
       font-weight: 800;
@@ -253,19 +283,14 @@
       background: rgba(239, 68, 68, 0.3); 
       color: #fff;
     }
-
-    /* Extra Small Screen Adjustments (Portrait Mobile) */
-    @media (max-width: 380px) {
-      .time-options {
-        grid-template-columns: repeat(3, 1fr);
-      }
-      .controls {
-        flex-direction: row;
-      }
-    }
   </style>
 </head>
 <body>
+
+  <!-- Fullscreen Toggle Button -->
+  <button class="fullscreen-btn" id="fullscreen-btn" onclick="toggleFullScreen()">
+    <span id="fs-icon">⛶</span> <span id="fs-text">Full Screen</span>
+  </button>
 
   <!-- Animated Glowing Data Rays -->
   <div class="neon-lines-bg">
@@ -311,6 +336,33 @@
 
     const display = document.getElementById('timer-display');
 
+    /* Fullscreen Functionality */
+    function toggleFullScreen() {
+      const fsText = document.getElementById('fs-text');
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.log(`Error attempting to enable full-screen mode: ${err.message}`);
+        });
+        fsText.innerText = 'Exit Full Screen';
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+        fsText.innerText = 'Full Screen';
+      }
+    }
+
+    // Update button text if user exits fullscreen using Esc key
+    document.addEventListener('fullscreenchange', () => {
+      const fsText = document.getElementById('fs-text');
+      if (!document.fullscreenElement) {
+        fsText.innerText = 'Full Screen';
+      } else {
+        fsText.innerText = 'Exit Full Screen';
+      }
+    });
+
+    /* Audio Functionality */
     function initAudio() {
       if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -379,6 +431,7 @@
       triggerSingleBeep(0.7);
     }
 
+    /* Timer Logic */
     function updateDisplay() {
       const minutes = Math.floor(timeLeft / 60);
       const seconds = timeLeft % 60;
@@ -428,7 +481,6 @@
       timerInterval = null;
     }
 
-    // Reset Timer
     function resetTimer() {
       pauseTimer();
       timeLeft = totalTime;
