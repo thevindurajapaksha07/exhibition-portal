@@ -1,284 +1,439 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="si">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Exhibition Competitions Portal</title>
-    <link rel="icon" type="image/png" href="logo1.png">
-    <link href="https://googleapis.com" rel="stylesheet">
-    
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ICT Day Competition Timer</title>
+  <link rel="icon" type="image/x-icon" href="logo1.png">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-        /* 1. LOADING SCREEN STYLING */
-        #loader-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: #020c1b;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Chakra Petch', sans-serif;
-            animation: hideLoader 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-            animation-delay: 0.8s; 
-        }
+    /* Dark Blue Animated Background */
+    body {
+      background: linear-gradient(-45deg, #010610, #020c10, #00365a, #010610, #020c1b);
+      background-size: 400% 400%;
+      animation: darkBlueGradientBG 30s ease infinite;
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+      position: relative;
+      overflow-x: hidden;
+    }
 
-        @keyframes hideLoader {
-            0% { opacity: 1; visibility: visible; }
-            100% { opacity: 0; visibility: hidden; display: none; }
-        }
+    @keyframes darkBlueGradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-        .loader-logo {
-            width: 100px;
-            height: 100px;
-            background-color: #000;
-            border-radius: 50%;
-            margin-bottom: 25px;
-            border: 2px solid #38b6ff;
-            box-shadow: 0 0 15px rgba(56, 182, 255, 0.3);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-        .loader-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .loader-text {
-            color: #ffffff;
-            font-size: 19px;
-            letter-spacing: 2px;
-            margin-bottom: 12px;
-            text-shadow: 0 0 8px rgba(56, 182, 255, 0.6);
-            animation: textBlink 0.3s infinite alternate;
-        }
-        
-        @keyframes textBlink {
-            0% { opacity: 0.4; }
-            100% { opacity: 1; }
-        }
+    /* Animated Glowing Tech Data Rays Container */
+    .neon-lines-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
 
-        .progress-container {
-            width: 200px;
-            height: 6px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid rgba(56, 182, 255, 0.2);
-        }
-        .progress-bar {
-            width: 0%;
-            height: 100%;
-            background-color: #38b6ff;
-            box-shadow: 0 0 10px #38b6ff;
-            animation: fillBar 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
+    /* Slower Moving Neon Lines */
+    .line {
+      position: absolute;
+      background: linear-gradient(90deg, transparent, #0284c7, #38bdf8, transparent);
+      box-shadow: 0 0 12px #0284c7, 0 0 24px #38bdf8;
+      border-radius: 50px;
+      opacity: 0.5;
+      animation: moveLine linear infinite;
+    }
 
-        @keyframes fillBar {
-            0% { width: 0%; }
-            100% { width: 100%; }
-        }
+    .line1 {
+      top: 25%;
+      left: -50%;
+      width: 40%;
+      height: 2px;
+      animation-duration: 16s;
+    }
 
-        /* 2. MAIN PAGE STYLING */
-        body {
-            background: linear-gradient(135deg, #020c1b 0%, #0a192f 35%, #0f2b48 70%, #031424 100%);
-            background-size: 400% 400%;
-            animation: liquidBg 12s ease infinite; 
-            font-family: 'Rajdhani', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-            position: relative;
-        }
+    .line2 {
+      top: 50%;
+      left: -60%;
+      width: 60%;
+      height: 2px;
+      animation-duration: 22s;
+      animation-delay: 3s;
+    }
 
-        @keyframes liquidBg {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+    .line3 {
+      top: 75%;
+      left: -40%;
+      width: 45%;
+      height: 2px;
+      animation-duration: 18s;
+      animation-delay: 6s;
+    }
 
-        .bubbles-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: 1;
-            pointer-events: none;
-        }
-        .bubble {
-            position: absolute;
-            bottom: -60px;
-            background-color: rgba(255, 255, 255, 0.06); 
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 50%;
-            box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.03);
-            animation: floatUp infinite linear;
-        }
-        .bubble:nth-child(1) { left: 8%; width: 45px; height: 45px; animation-duration: 9s; animation-delay: 0s; }
-        .bubble:nth-child(2) { left: 22%; width: 25px; height: 25px; animation-duration: 7s; animation-delay: 2s; }
-        .bubble:nth-child(3) { left: 38%; width: 55px; height: 55px; animation-duration: 11s; animation-delay: 1s; }
-        .bubble:nth-child(4) { left: 52%; width: 35px; height: 35px; animation-duration: 8s; animation-delay: 4s; }
-        .bubble:nth-child(5) { left: 68%; width: 28px; height: 28px; animation-duration: 10s; animation-delay: 0s; }
-        .bubble:nth-child(6) { left: 82%; width: 48px; height: 48px; animation-duration: 12s; animation-delay: 3s; }
-        .bubble:nth-child(7) { left: 92%; width: 18px; height: 18px; animation-duration: 6s; animation-delay: 1s; }
-        .bubble:nth-child(8) { left: 14%; width: 38px; height: 38px; animation-duration: 10s; animation-delay: 5s; }
+    @keyframes moveLine {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(300%); }
+    }
 
-        @keyframes floatUp {
-            0% { transform: translateY(0) scale(1); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-115vh) scale(1.2); opacity: 0; }
-        }
+    /* Responsive Glass Container */
+    .container {
+      position: relative;
+      z-index: 1;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      width: 100%;
+      max-width: 650px;
+      padding: clamp(20px, 4vw, 35px);
+      border-radius: clamp(16px, 3vw, 24px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+      text-align: center;
+      margin: auto;
+    }
 
-        .wrapper {
-            text-align: center;
-            width: 82%; 
-            max-width: 720px; 
-            margin: 0 auto;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .glass-panel {
-            background: rgba(4, 18, 31, 0.72); 
-            backdrop-filter: blur(20px);         
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.12); 
-            padding: 40px 35px;
-            border-radius: 16px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-        }
+    /* Circular Logo Holder */
+    .logo-container {
+      margin: 0 auto 15px auto;
+      width: clamp(80px, 15vw, 110px);
+      height: clamp(80px, 15vw, 110px);
+      border-radius: 50%;
+      padding: 4px;
+      background: rgba(2, 6, 23, 0.8);
+      border: 2px solid rgba(56, 189, 248, 0.4);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.25);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-        .logo-container {
-            width: 120px;
-            height: 120px;
-            background-color: #000000;
-            border-radius: 50%;
-            margin: 0 auto 15px auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            border: 2px solid rgba(255, 255, 255, 0.15);
-        }
-        .logo-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+    .logo-container img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
 
-        h1 {
-            font-size: 23px !important; 
-            font-family: 'Chakra Petch', sans-serif; 
-            color: #ffffff; 
-            margin-bottom: 12px !important; 
-            font-weight: bold;
-            letter-spacing: 0.5px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-            text-transform: none;
-        }
+    h1 {
+      font-size: clamp(1.3rem, 4vw, 2rem);
+      margin-bottom: clamp(10px, 2vw, 20px);
+      color: #e2e8f0;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
 
-        .link-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            margin-top: 15px; 
-        }
+    /* Dynamic Timer Display (Scale by Viewport) */
+    .timer-display {
+      font-size: clamp(3.2rem, 14vw, 6.5rem);
+      font-weight: 800;
+      font-family: 'Courier New', Courier, monospace;
+      color: #38bdf8;
+      background: rgba(2, 6, 23, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: clamp(10px, 2.5vw, 20px) 0;
+      border-radius: 20px;
+      margin: 15px 0;
+      letter-spacing: clamp(2px, 1vw, 5px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9);
+      transition: all 0.3s ease;
+      text-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+    }
 
-        .link-item {
-            display: block;
-            text-decoration: none;
-            color: #000000; 
-            padding: 16px 20px;
-            border-radius: 6px;
-            font-size: 16.5px;
-            font-weight: bold;
-            text-align: center;
-            border: 2px solid transparent;
-            transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1); 
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
+    /* Time Low Alert Style */
+    .timer-display.danger {
+      color: #ef4444;
+      border-color: rgba(239, 68, 68, 0.3);
+      text-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+      animation: pulse 1s infinite;
+    }
 
-        .btn-1, .btn-2, .btn-3, .btn-4 { 
-            background-color: #38b6ff; 
-        }
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.6; }
+      100% { opacity: 1; }
+    }
 
-        .link-item:hover { 
-            background-color: rgba(255, 255, 255, 0.12) !important; 
-            backdrop-filter: blur(8px) !important;                  
-            -webkit-backdrop-filter: blur(8px) !important;
-            border: 2px solid rgba(255, 255, 255, 0.5) !important;   
-            color: #ffffff !important;                                
-            font-size: 19px !important; 
-            box-shadow: 0 0 20px rgba(56, 182, 255, 0.2) !important; 
-        }
-        
-        @media (max-width: 768px) {
-            .wrapper { width: 92%; }
-            .glass-panel { padding: 30px 18px; }
-            .link-item { font-size: 14px; padding: 13px 12px; }
-            .link-item:hover { font-size: 15.5px !important; }
-            .logo-container { width: 100px; height: 100px; }
-            h1 { font-size: 16px; } 
-        }
-    </style>
+    /* Timing Buttons Grid Layout */
+    .time-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
+      gap: clamp(6px, 1.5vw, 10px);
+      justify-content: center;
+      margin-bottom: clamp(15px, 3vw, 25px);
+    }
+
+    .btn-time {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #cbd5e1;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: clamp(8px, 1.8vw, 12px) clamp(10px, 2vw, 20px);
+      border-radius: 12px;
+      font-size: clamp(0.85rem, 2.2vw, 1.1rem);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      white-space: nowrap;
+    }
+
+    .btn-time:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: rgba(56, 189, 248, 0.4);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    /* Controls Layout */
+    .controls {
+      display: flex;
+      gap: clamp(8px, 2vw, 15px);
+      justify-content: center;
+    }
+
+    .btn-control {
+      flex: 1;
+      padding: clamp(10px, 2vw, 15px);
+      font-size: clamp(0.95rem, 2.5vw, 1.2rem);
+      font-weight: bold;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    }
+
+    .btn-control:active {
+      transform: scale(0.96);
+    }
+
+    .btn-start { 
+      background: rgba(34, 197, 94, 0.15); 
+      color: #4ade80; 
+      border-color: rgba(34, 197, 94, 0.3);
+    }
+    .btn-pause { 
+      background: rgba(234, 179, 8, 0.15); 
+      color: #facc15; 
+      border-color: rgba(234, 179, 8, 0.3);
+    }
+    .btn-reset { 
+      background: rgba(239, 68, 68, 0.15); 
+      color: #f87171; 
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-start:hover { 
+      background: rgba(34, 197, 94, 0.3); 
+      color: #fff;
+    }
+    .btn-pause:hover { 
+      background: rgba(234, 179, 8, 0.3); 
+      color: #fff;
+    }
+    .btn-reset:hover { 
+      background: rgba(239, 68, 68, 0.3); 
+      color: #fff;
+    }
+
+    /* Extra Small Screen Adjustments (Portrait Mobile) */
+    @media (max-width: 380px) {
+      .time-options {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .controls {
+        flex-direction: row;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<div id="loader-screen">
-    <div class="loader-logo">
-        <img src="logo.png" alt="Logo" onerror="this.style.display='none'; this.parentNode.innerHTML='<span style=\'color:#38b6ff;font-weight:bold;font-size:14px;\'>LOGO</span>'">
+  <!-- Animated Glowing Data Rays -->
+  <div class="neon-lines-bg">
+    <div class="line line1"></div>
+    <div class="line line2"></div>
+    <div class="line line3"></div>
+  </div>
+
+  <div class="container">
+    
+    <!-- Circular Logo Section -->
+    <div class="logo-container">
+      <img src="logo.png" alt="ICT Logo" id="ict-logo">
     </div>
-    <div class="loader-text">LOADING...</div>
-    <div class="progress-container">
-        <div class="progress-bar"></div>
+
+    <h1>Digital Timer</h1>
+    
+    <!-- Big Timer Display -->
+    <div class="timer-display" id="timer-display">00:00</div>
+
+    <!-- Timing Buttons -->
+    <div class="time-options">
+      <button class="btn-time" onclick="setTimer(30)">30s</button>
+      <button class="btn-time" onclick="setTimer(240)">4 Min</button>
+      <button class="btn-time" onclick="setTimer(300)">5 Min</button>
+      <button class="btn-time" onclick="setTimer(600)">10 Min</button>
+      <button class="btn-time" onclick="setTimer(900)">15 Min</button>
     </div>
-</div>
 
-<div class="bubbles-container">
-    <div class="bubble"></div>
-    <div class="bubble"></div>
-    <div class="bubble"></div>
-    <div class="bubble"></div>
-    <div class="bubble"></div>
-    <div class="bubble"></div>
-    <div class="bubble"></div>
-    <div class="bubble"></div>
-</div>
-
-<div class="wrapper">
-    <div class="glass-panel">
-        <div class="logo-container">
-            <img src="logo.png" alt="Exhibition Logo" onerror="this.style.display='none'; this.parentNode.innerHTML='<span style=\'color:#38b6ff;font-weight:bold;font-size:16px;\'>LOGO</span>'">
-        </div>
-
-        <h1>Select Your Competition Below to Register</h1>
-        <br>
-        <div class="link-list">
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLScKVG4K6NPnOyxDqGsrSrp89GuP1PzmfWDmBxb_Ni1DiYgf2w/viewform" target="_blank" class="link-item btn-1">MindRush - Quiz Compitition</a>
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLSeqPLwtsNA4LDOQ2ucvH77rvbnckFKB705HJLB2qdh7D9ptUA/viewform" target="_blank" class="link-item btn-2">FutureBit - Smart Solutions with Micro:bit</a>
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLScGXZ_vstPgKiFwUTrayfeGTF_7QvaR5otD9oq9BRoQiPBFLQ/viewform?usp=send_form" target="_blank" class="link-item btn-3">The Great Debate</a>
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLSdSZ1h3_IAtkQqSNBrMjIFvyfssBWUOUutBPAr2cl3Aax5Oqg/viewform" target="_blank" class="link-item btn-4">Path Finders - RoboTrack Championship</a>
-        </div>
+    <!-- Timer Control Buttons -->
+    <div class="controls">
+      <button class="btn-control btn-start" onclick="startTimer()">START</button>
+      <button class="btn-control btn-pause" onclick="pauseTimer()">PAUSE</button>
+      <button class="btn-control btn-reset" onclick="resetTimer()">RESET</button>
     </div>
-</div>
+  </div>
 
+  <script>
+    let timeLeft = 0;
+    let totalTime = 0;
+    let timerInterval = null;
+    let audioCtx = null;
+
+    const display = document.getElementById('timer-display');
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playStartBeep() {
+      initAudio();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+
+      oscillator.type = 'sine';
+      oscillator.frequency.value = 900;
+
+      gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+      gainNode.gain.linearRampToValueAtTime(0.8, audioCtx.currentTime + 0.03);
+      gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      oscillator.start();
+      oscillator.stop(audioCtx.currentTime + 0.2);
+    }
+
+    function playTickSound() {
+      initAudio();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+
+      oscillator.type = 'sine';
+      oscillator.frequency.value = 600;
+
+      gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      oscillator.start();
+      oscillator.stop(audioCtx.currentTime + 0.15);
+    }
+
+    function playDoubleBeepSound() {
+      initAudio();
+
+      function triggerSingleBeep(startTime) {
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        oscillator.type = 'sine';
+        oscillator.frequency.value = 850;
+
+        gainNode.gain.setValueAtTime(0, audioCtx.currentTime + startTime);
+        gainNode.gain.linearRampToValueAtTime(0.9, audioCtx.currentTime + startTime + 0.05);
+        gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + startTime + 0.5);
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        oscillator.start(audioCtx.currentTime + startTime);
+        oscillator.stop(audioCtx.currentTime + startTime + 0.5);
+      }
+
+      triggerSingleBeep(0);
+      triggerSingleBeep(0.7);
+    }
+
+    function updateDisplay() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+
+      const formattedMin = String(minutes).padStart(2, '0');
+      const formattedSec = String(seconds).padStart(2, '0');
+
+      display.innerText = `${formattedMin}:${formattedSec}`;
+
+      if (timeLeft <= 10 && timeLeft > 0) {
+        display.classList.add('danger');
+      } else {
+        display.classList.remove('danger');
+      }
+    }
+
+    function setTimer(seconds) {
+      pauseTimer();
+      timeLeft = seconds;
+      totalTime = seconds;
+      updateDisplay();
+    }
+
+    function startTimer() {
+      if (timerInterval !== null || timeLeft <= 0) return;
+      
+      playStartBeep();
+
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        updateDisplay();
+
+        if (timeLeft <= 10 && timeLeft > 0) {
+          playTickSound();
+        }
+
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          playDoubleBeepSound();
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+
+    // Reset Timer
+    function resetTimer() {
+      pauseTimer();
+      timeLeft = totalTime;
+      updateDisplay();
+    }
+  </script>
 </body>
 </html>
